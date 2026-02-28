@@ -1,73 +1,115 @@
 /**
- * 杨文通 · 项目作品集导航 — main.js
- * Author : Yang Wentong
- * Updated: 2026-02-28
+ * YANG WENTONG — Portfolio Index
+ * main.js · 2026-02-28
  *
- * 功能：
- *   1. 标记 JS 已加载（<html> 追加 .js 类），激活基于 CSS 的渐入动效。
- *   2. IntersectionObserver：项目条目进入视口时追加 .visible，触发淡入上移效果。
- *   3. 自动更新 Footer 版权年份。
+ * Responsibilities
+ *   1. Scroll-reveal  — IntersectionObserver to fade-in project cards.
+ *   2. Keyboard nav   — Arrow keys to move focus between cards; Enter/Space
+ *                       activates the "查看仓库" link inside the focused card.
+ *   3. Reduced motion — respects prefers-reduced-motion: all animation skipped.
+ *
+ * Rules
+ *   - Does NOT create any new DOM elements (no buttons, no links, no overlays).
+ *   - Does NOT modify href / text of any existing link.
+ *   - IIFE — no global pollution.
  */
-
 (function () {
   'use strict';
 
-  /* ── 1. 标记 JS 已就绪，解锁渐入 CSS ── */
-  document.documentElement.classList.replace('no-js', 'js');
+  var reducedMotion =
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ── 1. Scroll-reveal ─────────────────────────────── */
+  function initReveal() {
+    var cards = Array.prototype.slice.call(
+      document.querySelectorAll('.card')
+    );
+    if (!cards.length) return;
 
-  /* ── 2. 项目条目进入视口渐入 ── */
-  function observeItems() {
-    var items = document.querySelectorAll('.project-item');
-    if (!items.length) return;
-
-    // 不支持 IntersectionObserver 时直接显示
-    if (!('IntersectionObserver' in window)) {
-      items.forEach(function (el) { el.classList.add('visible'); });
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      /* Skip animation — make all visible instantly */
+      cards.forEach(function (c) {
+        c.classList.remove('card--hidden');
+        c.classList.add('card--visible');
+      });
       return;
     }
+
+    /* Stagger delay: each card enters 70 ms after the previous */
+    cards.forEach(function (c) { c.classList.add('card--hidden'); });
 
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target); // 只触发一次
-          }
+          if (!entry.isIntersecting) return;
+          var el    = entry.target;
+          var index = cards.indexOf(el);
+          var delay = Math.max(0, index * 70);
+          setTimeout(function () {
+            el.classList.remove('card--hidden');
+            el.classList.add('card--visible');
+          }, delay);
+          observer.unobserve(el);
         });
       },
-      {
-        threshold: 0.08,   // 条目露出 8% 即触发
-        rootMargin: '0px 0px -24px 0px'
-      }
+      { threshold: 0.06, rootMargin: '0px 0px -20px 0px' }
     );
 
-    // 按序错开入场时间，营造节奏感
-    items.forEach(function (el, i) {
-      el.style.transitionDelay = (i * 60) + 'ms';
-      observer.observe(el);
+    cards.forEach(function (c) { observer.observe(c); });
+  }
+
+  /* ── 2. Keyboard navigation between cards ─────────── */
+  function initKeyboardNav() {
+    var list = document.querySelector('.project-list');
+    if (!list) return;
+
+    /*
+     * Make each card focusable so screen-reader / keyboard users
+     * can navigate the list with Tab naturally.
+     * We additionally support Up/Down arrows for faster traversal.
+     */
+    var cards = Array.prototype.slice.call(list.querySelectorAll('.card'));
+
+    cards.forEach(function (card, i) {
+      /* Cards themselves are focusable landmarks */
+      if (!card.getAttribute('tabindex')) {
+        card.setAttribute('tabindex', '0');
+      }
+      card.setAttribute('role', 'article');
+
+      card.addEventListener('keydown', function (e) {
+        var key = e.key;
+
+        /* Enter or Space → activate the "查看仓库" link inside */
+        if (key === 'Enter' || key === ' ') {
+          var link = card.querySelector('.card__link');
+          if (link) {
+            e.preventDefault();
+            link.click();
+          }
+          return;
+        }
+
+        /* Arrow Down / Arrow Up → move to sibling card */
+        if (key === 'ArrowDown' || key === 'ArrowUp') {
+          e.preventDefault();
+          var next = key === 'ArrowDown' ? cards[i + 1] : cards[i - 1];
+          if (next) next.focus();
+        }
+      });
     });
   }
 
-
-  /* ── 3. 自动更新版权年份 ── */
-  function updateYear() {
-    var el = document.getElementById('footer-year');
-    if (el) {
-      el.textContent = new Date().getFullYear();
-    }
+  /* ── Boot ─────────────────────────────────────────── */
+  function boot() {
+    initReveal();
+    initKeyboardNav();
   }
 
-
-  /* ── 入口：DOM 就绪后执行 ── */
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      observeItems();
-      updateYear();
-    });
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
-    observeItems();
-    updateYear();
+    boot();
   }
-
 }());

@@ -1,373 +1,490 @@
 /* ================================================================
-   杨文通 · 项目作品集导航 — Stylesheet
-   Author : Yang Wentong
-   Updated: 2026-02-28
+   YANG WENTONG — Portfolio Index
+   styles.css · 2026-02-28
    ================================================================ */
 
 /* ─────────────────────────────────────
-   1. 设计令牌（CSS Custom Properties）
+   § 1  Design Tokens
    ───────────────────────────────────── */
 :root {
-  --bg:           #f0ebe2;
-  --panel:        #faf7f2;
-  --panel-hover:  #fdfaf6;
-  --text:         #1c1916;
-  --muted:        #6a5f54;
-  --subtle:       #9c9188;
-  --line:         #ddd5cb;
-  --line-hover:   #b8a99a;
-  --accent:       #3d4f36;   /* 低饱和墨绿 */
-  --num:          #c8bfb5;
+  /* Surface */
+  --c-bg:          #f1ece1;   /* warm parchment */
+  --c-surface:     #faf7f1;   /* card face */
+  --c-surface-hi:  #fdfcf8;   /* card face on hover */
 
-  --radius:       15px;
-  --radius-sm:    8px;
+  /* Ink */
+  --c-ink:         #181410;   /* primary text */
+  --c-ink-2:       #5c5149;   /* secondary / muted */
+  --c-ink-3:       #9a8e83;   /* ghost / metadata */
 
-  /* 多层柔影 */
-  --shadow-a: 0 1px 2px  rgba(40, 28, 18, 0.04);
-  --shadow-b: 0 4px 12px rgba(40, 28, 18, 0.07);
-  --shadow-c: 0 10px 28px rgba(40, 28, 18, 0.09);
-  --shadow:   var(--shadow-a), var(--shadow-b), var(--shadow-c);
+  /* Stroke */
+  --c-rule:        #e1d8cc;   /* default border */
+  --c-rule-hi:     #c4b8ab;   /* hover border */
 
-  --shadow-hover-a: 0 1px 2px  rgba(40, 28, 18, 0.05);
-  --shadow-hover-b: 0 6px 16px rgba(40, 28, 18, 0.09);
-  --shadow-hover-c: 0 16px 36px rgba(40, 28, 18, 0.12);
-  --shadow-hover:  var(--shadow-hover-a), var(--shadow-hover-b), var(--shadow-hover-c);
+  /* Accent — low-sat olive */
+  --c-accent:      #3a4f32;
+  --c-accent-dim:  #5c7250;
+
+  /* Stack chip */
+  --c-chip-bg:     #edeae3;
+  --c-chip-ink:    #5c5149;
+
+  /* Decoration */
+  --c-index:       #ddd6cd;   /* large item number */
+
+  /* Shadow — 3 layers */
+  --sh:
+    0 1px 2px   rgba(24, 16,  8, 0.04),
+    0 4px 14px  rgba(24, 16,  8, 0.06),
+    0 12px 32px rgba(24, 16,  8, 0.07);
+  --sh-hi:
+    0 1px 3px   rgba(24, 16,  8, 0.05),
+    0 6px 18px  rgba(24, 16,  8, 0.09),
+    0 20px 44px rgba(24, 16,  8, 0.10);
+
+  /* Shape */
+  --r:    16px;
+  --r-sm: 7px;
+
+  /* Type scale */
+  --fs-xs:   11px;
+  --fs-sm:   12.5px;
+  --fs-base: 14px;
+  --fs-body: 13.5px;
+  --fs-head: clamp(26px, 5.5vw, 36px);
 }
 
 
 /* ─────────────────────────────────────
-   2. 重置
+   § 2  Reset
    ───────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
+ol, ul { list-style: none; }
+a      { color: inherit; text-decoration: none; }
 
 
 /* ─────────────────────────────────────
-   3. body & SVG 噪点纹理
+   § 3  Global — Body + Noise Texture
    ───────────────────────────────────── */
 body {
+  background-color: var(--c-bg);
+  color: var(--c-ink);
+  font-family:
+    -apple-system, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: var(--fs-base);
+  line-height: 1.7;
   min-height: 100vh;
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
-               "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-  line-height: 1.68;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 纯 CSS/SVG feTurbulence 噪点纹理（非外部图片） */
-body::before {
-  content: '';
+/* SVG feTurbulence grain — no image file */
+body::after {
+  content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
+  z-index: 999;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
 
 
 /* ─────────────────────────────────────
-   4. 版心容器
+   § 4  Layout Wrapper
    ───────────────────────────────────── */
-.wrap {
+.page {
   position: relative;
   z-index: 1;
-  max-width: 700px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
 
 /* ─────────────────────────────────────
-   5. Header
+   § 5  Header
    ───────────────────────────────────── */
-.site-header {
-  padding: 72px 0 52px;
-  border-bottom: 1px solid var(--line);
+.header {
+  padding: 80px 0 60px;
+  border-bottom: 1px solid var(--c-rule);
 }
 
-.header-inner {
+.header__eyebrow {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  opacity: 0.7;
+  margin-bottom: 18px;
+}
+
+.header__body {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
+  gap: 28px;
   flex-wrap: wrap;
 }
 
-.header-label {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 14px;
-  opacity: 0.75;
+.header__title-block {}
+
+.header__title {
+  font-size: var(--fs-head);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--c-ink);
+  margin-bottom: 11px;
 }
 
-.site-title {
-  font-size: clamp(24px, 5vw, 34px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: var(--text);
-  margin-bottom: 10px;
+.header__subtitle {
+  font-size: var(--fs-base);
+  color: var(--c-ink-2);
+  letter-spacing: 0;
+  line-height: 1.5;
 }
 
-.site-subtitle {
-  font-size: 14.5px;
-  color: var(--muted);
-  letter-spacing: 0.01em;
-}
-
-/* 唯一按钮：简历总入口 */
-.resume-btn {
+/* —— The one and only CTA —— */
+.cta {
   display: inline-flex;
   align-items: center;
-  padding: 11px 22px;
-  border: 1.5px solid var(--accent);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--accent);
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.015em;
-  text-decoration: none;
+  gap: 7px;
+  padding: 10px 20px;
+  border: 1.5px solid var(--c-accent);
+  border-radius: var(--r-sm);
+  color: var(--c-accent);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   flex-shrink: 0;
   transition:
-    background 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease;
+    background-color 0.16s ease,
+    color            0.16s ease,
+    transform        0.16s ease;
 }
-
-.resume-btn:hover {
-  background: var(--accent);
+.cta:hover,
+.cta:focus-visible {
+  background-color: var(--c-accent);
   color: #fff;
   transform: translateY(-1px);
+  outline: none;
+}
+.cta:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+/* Arrow glyph on button */
+.cta::after {
+  content: "↗";
+  font-size: 11px;
+  opacity: 0.8;
+  transition: transform 0.16s ease;
+}
+.cta:hover::after {
+  transform: translate(1px, -1px);
 }
 
 
 /* ─────────────────────────────────────
-   6. 项目列表区
+   § 6  Project Section
    ───────────────────────────────────── */
-.project-section {
-  padding: 56px 0 48px;
+.projects {
+  padding: 64px 0 56px;
 }
 
-.section-heading {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+.projects__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.projects__label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--subtle);
-  margin-bottom: 32px;
+  color: var(--c-ink-3);
+}
+
+.projects__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--c-rule);
+}
+
+.projects__count {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--c-ink-3);
 }
 
 .project-list {
-  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 
 /* ─────────────────────────────────────
-   7. 单条项目块
+   § 7  Project Card
    ───────────────────────────────────── */
-.project-item {
+.card {
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 28px 30px 26px;
-  box-shadow: var(--shadow);
+  background: var(--c-surface);
+  border: 1px solid var(--c-rule);
+  border-radius: var(--r);
+  padding: 30px 32px 27px 30px;
+  box-shadow: var(--sh);
+
+  /* left accent bar */
+  border-left: 3px solid transparent;
+
   transition:
-    border-color 0.2s ease,
-    background   0.2s ease,
-    box-shadow   0.2s ease,
-    transform    0.2s ease;
+    border-color     0.22s ease,
+    border-left-color 0.22s ease,
+    background-color 0.22s ease,
+    box-shadow       0.22s ease,
+    transform        0.22s ease;
 }
 
-.project-item:hover {
-  border-color: var(--line-hover);
-  background: var(--panel-hover);
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-1px);
+.card:hover {
+  background-color: var(--c-surface-hi);
+  border-color: var(--c-rule-hi);
+  border-left-color: var(--c-accent);
+  box-shadow: var(--sh-hi);
+  transform: translateY(-2px);
 }
 
-/* JS 增强：进入视口前初始状态（仅在 .js 类存在时生效） */
-.js .project-item {
+/* Scroll-reveal initial state — applied via JS */
+.card--hidden {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(14px);
   transition:
-    opacity     0.4s ease,
-    transform   0.4s ease,
-    border-color 0.2s ease,
-    background   0.2s ease,
-    box-shadow   0.2s ease;
+    opacity          0.42s ease,
+    transform        0.42s ease,
+    border-color     0.22s ease,
+    border-left-color 0.22s ease,
+    background-color 0.22s ease,
+    box-shadow       0.22s ease;
 }
-
-.js .project-item.visible {
+.card--visible {
   opacity: 1;
   transform: translateY(0);
 }
-
-.js .project-item.visible:hover {
-  transform: translateY(-1px);
+.card--visible:hover {
+  transform: translateY(-2px);
 }
 
-/* 右上角序号 */
-.project-num {
+/* Decorative index number */
+.card__index {
   position: absolute;
-  top: 24px;
-  right: 26px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--num);
-  letter-spacing: 0.06em;
+  top: 22px;
+  right: 24px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--c-index);
   font-variant-numeric: tabular-nums;
   user-select: none;
+  line-height: 1;
 }
 
-/* 项目名 */
-.project-name {
-  font-size: 17.5px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  margin-bottom: 6px;
-  padding-right: 44px;
-  line-height: 1.3;
+/* ── name row ── */
+.card__name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--c-ink);
+  line-height: 1.25;
+  margin-bottom: 5px;
+  padding-right: 48px;
 }
 
-.project-name .en {
-  font-size: 12.5px;
+.card__slug {
+  display: inline-block;
+  font-size: 11.5px;
   font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0;
-  margin-left: 6px;
+  color: var(--c-ink-3);
+  letter-spacing: 0.02em;
+  margin-left: 8px;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+  vertical-align: middle;
+}
+
+/* ── tagline ── */
+.card__tagline {
+  font-size: var(--fs-body);
+  color: var(--c-ink-2);
+  line-height: 1.62;
+  margin-bottom: 16px;
+}
+
+/* ── divider ── */
+.card__rule {
+  display: block;
+  height: 1px;
+  background: var(--c-rule);
+  margin-bottom: 14px;
   opacity: 0.8;
 }
 
-/* 一句话定位 */
-.project-tagline {
-  font-size: 13.5px;
-  color: var(--muted);
-  margin-bottom: 14px;
-  line-height: 1.58;
+/* ── stack chips ── */
+.card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 6px;
+  margin-bottom: 16px;
 }
 
-/* 分割线 */
-.project-divider {
-  height: 1px;
-  background: var(--line);
-  margin: 13px 0;
-}
-
-/* 技术栈行 */
-.project-stack {
-  font-size: 12px;
-  color: var(--subtle);
-  letter-spacing: 0.01em;
-  margin-bottom: 14px;
-}
-
-.stack-label {
+.stack-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--c-chip-bg);
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--muted);
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-right: 4px;
+  color: var(--c-chip-ink);
+  letter-spacing: 0.03em;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+  line-height: 1.8;
 }
 
-/* 亮点列表 */
-.project-highlights {
-  list-style: none;
+/* ── highlights ── */
+.card__highlights {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 22px;
 }
 
-.project-highlights li {
-  font-size: 13.5px;
-  color: var(--text);
-  line-height: 1.62;
-  padding-left: 13px;
+.card__highlights li {
+  font-size: var(--fs-body);
+  color: var(--c-ink);
+  line-height: 1.65;
+  padding-left: 16px;
   position: relative;
 }
 
-.project-highlights li::before {
-  content: '';
+.card__highlights li::before {
+  content: "";
   position: absolute;
   left: 0;
-  top: 10px;
-  width: 5px;
-  height: 1.5px;
-  background: var(--accent);
+  top: 0.52em;
+  width: 6px;
+  height: 1px;
+  background: var(--c-accent-dim);
   border-radius: 1px;
-  opacity: 0.65;
 }
 
-/* 仓库链接 */
-.project-link {
+/* ── repo link ── */
+.card__link {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
-  letter-spacing: 0.02em;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--c-accent);
+  letter-spacing: 0.03em;
   border-bottom: 1px solid transparent;
   padding-bottom: 1px;
-  transition: border-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    border-color 0.14s ease,
+    color        0.14s ease;
 }
 
-.project-link:hover {
-  border-bottom-color: var(--accent);
-  opacity: 0.75;
+.card__link:hover,
+.card__link:focus-visible {
+  border-bottom-color: var(--c-accent);
+  color: var(--c-accent-dim);
+  outline: none;
 }
 
-.project-link svg {
+.card__link:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* GitHub mark — inline SVG via CSS content trick not feasible, placed inline in HTML */
+.card__link svg {
   flex-shrink: 0;
-  opacity: 0.65;
+  opacity: 0.6;
+  transition: opacity 0.14s ease;
+}
+.card__link:hover svg {
+  opacity: 1;
 }
 
 
 /* ─────────────────────────────────────
-   8. Footer
+   § 8  Footer
    ───────────────────────────────────── */
-.site-footer {
-  border-top: 1px solid var(--line);
-  padding: 26px 0 48px;
+.footer {
+  border-top: 1px solid var(--c-rule);
+  padding: 28px 0 56px;
 }
 
-.footer-text {
-  font-size: 12px;
-  color: var(--subtle);
-  letter-spacing: 0.04em;
-  line-height: 1.9;
+.footer__line {
+  font-size: 11.5px;
+  color: var(--c-ink-3);
+  letter-spacing: 0.05em;
+  line-height: 2;
 }
 
 
 /* ─────────────────────────────────────
-   9. 响应式
+   § 9  Focus Ring (global)
    ───────────────────────────────────── */
-@media (max-width: 520px) {
-  .wrap          { padding: 0 16px; }
-  .site-header   { padding: 44px 0 36px; }
-  .header-inner  { flex-direction: column; align-items: flex-start; gap: 18px; }
-  .project-item  { padding: 22px 20px 20px; }
-  .project-num   { top: 18px; right: 18px; }
-  .project-name  { font-size: 16px; }
-  .project-section { padding: 40px 0 32px; }
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+
+/* ─────────────────────────────────────
+   § 10  Reduced Motion
+   ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card--hidden,
+  .card--visible,
+  .cta,
+  .card__link {
+    transition: none !important;
+    animation: none !important;
+  }
+  .card--hidden {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ─────────────────────────────────────
+   § 11  Responsive
+   ───────────────────────────────────── */
+@media (max-width: 500px) {
+  .page            { padding: 0 18px; }
+  .header          { padding: 52px 0 44px; }
+  .header__body    { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .projects        { padding: 48px 0 40px; }
+  .card            { padding: 24px 22px 22px 20px; }
+  .card__name      { font-size: 16px; }
+  .card__index     { top: 18px; right: 18px; }
 }
