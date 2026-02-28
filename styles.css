@@ -32,6 +32,14 @@
   /* Decoration */
   --c-index:       #ddd6cd;   /* large item number */
 
+  /* Spacing — 8pt grid */
+  --space-1:  8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+
   /* Shadow — 3 layers */
   --sh:
     0 1px 2px   rgba(24, 16,  8, 0.04),
@@ -70,6 +78,10 @@ a      { color: inherit; text-decoration: none; }
 /* ─────────────────────────────────────
    § 3  Global — Body + Noise Texture
    ───────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--c-bg);
   color: var(--c-ink);
@@ -113,8 +125,9 @@ body::after {
    § 5  Header
    ───────────────────────────────────── */
 .header {
-  padding: 80px 0 60px;
+  padding: 80px 0 64px;
   border-bottom: 1px solid var(--c-rule);
+  text-align: center;
 }
 
 .header__eyebrow {
@@ -125,18 +138,15 @@ body::after {
   text-transform: uppercase;
   color: var(--c-accent);
   opacity: 0.7;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-3);
 }
 
 .header__body {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
 }
-
-.header__title-block {}
 
 .header__title {
   font-size: var(--fs-head);
@@ -144,25 +154,35 @@ body::after {
   letter-spacing: -0.025em;
   line-height: 1.1;
   color: var(--c-ink);
-  margin-bottom: 11px;
+  margin-bottom: 0;
 }
 
 .header__subtitle {
   font-size: var(--fs-base);
   color: var(--c-ink-2);
   letter-spacing: 0;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* —— The one and only CTA —— */
+/* —— CTA button group —— */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+/* Primary CTA */
 .cta {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border: 1.5px solid var(--c-accent);
   border-radius: var(--r-sm);
-  color: var(--c-accent);
+  background-color: var(--c-accent);
+  color: #fff;
   font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -170,12 +190,14 @@ body::after {
   flex-shrink: 0;
   transition:
     background-color 0.16s ease,
+    border-color     0.16s ease,
     color            0.16s ease,
     transform        0.16s ease;
 }
 .cta:hover,
 .cta:focus-visible {
-  background-color: var(--c-accent);
+  background-color: var(--c-accent-dim);
+  border-color: var(--c-accent-dim);
   color: #fff;
   transform: translateY(-1px);
   outline: none;
@@ -185,15 +207,38 @@ body::after {
   outline-offset: 3px;
 }
 
-/* Arrow glyph on button */
-.cta::after {
+/* Arrow glyph on primary button */
+.cta:not(.cta--secondary)::after {
   content: "↗";
   font-size: 11px;
-  opacity: 0.8;
+  opacity: 0.85;
   transition: transform 0.16s ease;
 }
-.cta:hover::after {
+.cta:not(.cta--secondary):hover::after {
   transform: translate(1px, -1px);
+}
+
+/* Secondary (ghost) CTA */
+.cta--secondary {
+  background-color: transparent;
+  border-color: var(--c-rule-hi);
+  color: var(--c-ink-2);
+}
+.cta--secondary:hover,
+.cta--secondary:focus-visible {
+  background-color: var(--c-chip-bg);
+  border-color: var(--c-accent);
+  color: var(--c-ink);
+  transform: translateY(-1px);
+}
+.cta--secondary::after {
+  content: "↓";
+  font-size: 11px;
+  opacity: 0.6;
+  transition: transform 0.16s ease;
+}
+.cta--secondary:hover::after {
+  transform: translateY(2px);
 }
 
 
@@ -461,6 +506,9 @@ body::after {
    § 10  Reduced Motion
    ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   .card,
   .card--hidden,
   .card--visible,
@@ -481,8 +529,9 @@ body::after {
    ───────────────────────────────────── */
 @media (max-width: 500px) {
   .page            { padding: 0 18px; }
-  .header          { padding: 52px 0 44px; }
-  .header__body    { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .header          { padding: 48px 0 40px; }
+  .header__body    { flex-direction: column; align-items: center; gap: 16px; }
+  .hero__actions   { gap: 10px; }
   .projects        { padding: 48px 0 40px; }
   .card            { padding: 24px 22px 22px 20px; }
   .card__name      { font-size: 16px; }

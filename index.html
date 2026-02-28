@@ -16,17 +16,22 @@
     <div class="page">
       <span class="header__eyebrow">Yang Wentong · Portfolio Index</span>
       <div class="header__body">
-        <div class="header__title-block">
-          <h1 class="header__title">杨文通&thinsp;·&thinsp;项目作品集导航</h1>
-          <p class="header__subtitle">后端 / Java &nbsp;&middot;&nbsp; 面试演示入口（按推荐顺序）</p>
+        <h1 class="header__title">杨文通&thinsp;·&thinsp;项目作品集导航</h1>
+        <p class="header__subtitle">后端 / Java &nbsp;&middot;&nbsp; 面试演示入口（按推荐顺序）</p>
+        <div class="hero__actions">
+          <a
+            class="cta"
+            href="https://github.com/ywtbuilder/ywtbuilder-profile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开简历总入口（新标签页）"
+          >简历总入口</a>
+          <a
+            class="cta cta--secondary"
+            href="#projects"
+            aria-label="跳转到项目列表"
+          >查看项目列表</a>
         </div>
-        <a
-          class="cta"
-          href="https://github.com/ywtbuilder/ywtbuilder-profile"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="打开简历总入口（新标签页）"
-        >简历总入口</a>
       </div>
     </div>
   </header>
@@ -35,7 +40,7 @@
   <!-- ══════════════════════════════════════
        B. PROJECT LIST
   ══════════════════════════════════════ -->
-  <main class="projects">
+  <main class="projects" id="projects">
     <div class="page">
 
       <div class="projects__meta" aria-hidden="true">
@@ -75,7 +80,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>双端 BFF 拆分（<code>mall-app-api</code> / <code>mall-admin-api</code>），领域模块复用；首页 API P95&nbsp;=&nbsp;52&thinsp;ms（Spring Cache + 响应体精简 72%），生产模式首屏可交互 P95&nbsp;=&nbsp;139.7&thinsp;ms。</li>
             <li>Elasticsearch 全文检索，ES 节点不可用时自动降级 MySQL LIKE 零感知切换；搜索接口 P95&nbsp;=&nbsp;6.1&thinsp;ms；JWT + RBAC 动态权限，管理端 16 个视图完整覆盖。</li>
-            <li>RabbitMQ 驱动订单超时自动取消；图片 BLOB 化写入 <code>pms_asset</code>（sha256 去重），53 张主图离线可用率 100%；<code>X-Trace-Id</code> 贯通前后端链路追踪。</li>
           </ul>
 
           <a
@@ -120,7 +124,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>H2 内嵌替代 MySQL，去除全部外部中间件；<code>startup.bat</code> 一键冷启动约 30&thinsp;s，查票接口单机响应 &lt;&nbsp;120&thinsp;ms。</li>
             <li>座位锁定 + 行程区间幂等校验保障下单唯一性；连续 20 次下单成功率 100%，订单→支付状态机完整流转可演示。</li>
-            <li><code>TrainStationRelation</code> 多段区间独立定价设计（A→C 可分段分别定价），适合"单体 vs 微服务"架构权衡深入讲解。</li>
           </ul>
 
           <a
@@ -163,7 +166,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>四类改进方案（TBD 三分支注意力、BiFormer 双向路由注意力、多尺度特征融合、SPD-CARAFE 轻量上采样），方案 A·L 相对基线 mAP@0.5 提升约 5%。</li>
             <li>15 个方案模型（5 改进方案 × 3 规模）统一托管；单图推理 &lt;&nbsp;1&thinsp;s（GPU），服务连续调用 100 次无 5xx，结果文件落盘可回溯。</li>
-            <li>训练指标看板（mAP/Loss 曲线、混淆矩阵、P-R 曲线）单屏展示，支持方案与规模切换并排对比，便于量化说明改进效果。</li>
           </ul>
 
           <a
@@ -205,7 +207,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>三级流水线（IF&rarr;ID&rarr;EX）：数据冒险（RAW）引入 Stall 暂停检测单元，控制冒险引入跳转地址重定向，两类冒险各有专用硬件处理路径，波形可直接验证。</li>
             <li>官方测试集 47/48 通过（97.9%），覆盖 RV32UI 全量 39 条 + RV32UM 乘除法 8 条，x27/x28/x29/x30 寄存器写回结果逐条比对。</li>
-            <li>Vivado 行为仿真波形可观测各阶段 PC 值、指令码与写回数据；Vivado 2023.2 打开 <code>.xpr</code> 一键复现，无需额外环境配置。</li>
           </ul>
 
           <a
@@ -248,7 +249,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>四种机制统一封装进 <code>comm.lib</code> 静态库，同一套 Sender/Receiver 二进制交互菜单，可在同一会话内切换机制发送同一条消息，实现差异横向对比。</li>
             <li>共享内存引入命名事件 + 互斥量消除写竞态；命名管道单独处理 <code>ERROR_PIPE_CONNECTED</code> 边界；邮件槽设置超时避免无限阻塞。</li>
-            <li>全部四种机制 Debug|x64 构建零错误，非法输入后均可安全返回菜单；通信边界情况覆盖完整，适合系统编程课程讲解对比。</li>
           </ul>
 
           <a
@@ -291,7 +291,6 @@
           <ul class="card__highlights" aria-label="技术亮点">
             <li>每连接独立线程，服务端集中广播分发；本机三路并发消息广播延迟均 &lt;&nbsp;10&thinsp;ms，"连接建立→广播分发→UI 刷新"全链路路径清晰可追踪。</li>
             <li>关键 UI 更新路径统一通过 <code>SwingUtilities.invokeLater</code> 调度至 EDT，保证无竞态刷新；客户端断开/重连期间其余连接保持稳定。</li>
-            <li>服务端 GUI 实时显示在线连接状态并支持向全体推送公告；可直接作为"一连接一线程"并发模型与 Swing EDT 安全问题的入门演示材料。</li>
           </ul>
 
           <a

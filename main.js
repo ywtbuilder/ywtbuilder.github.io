@@ -6,7 +6,9 @@
  *   1. Scroll-reveal  — IntersectionObserver to fade-in project cards.
  *   2. Keyboard nav   — Arrow keys to move focus between cards; Enter/Space
  *                       activates the "查看仓库" link inside the focused card.
- *   3. Reduced motion — respects prefers-reduced-motion: all animation skipped.
+ *   3. Smooth anchor  — Polyfill smooth scroll for in-page anchor links
+ *                       (e.g., #projects), falling back to CSS scroll-behavior.
+ *   4. Reduced motion — respects prefers-reduced-motion: all animation skipped.
  *
  * Rules
  *   - Does NOT create any new DOM elements (no buttons, no links, no overlays).
@@ -101,10 +103,33 @@
     });
   }
 
+  /* ── 3. Smooth anchor scroll (polyfill) ───────────── */
+  function initSmoothAnchor() {
+    /* CSS scroll-behavior handles this in modern browsers.
+     * Only add JS polyfill when the browser lacks support. */
+    if (reducedMotion) return;
+    if ('scrollBehavior' in document.documentElement.style) return;
+
+    var anchors = Array.prototype.slice.call(
+      document.querySelectorAll('a[href^="#"]')
+    );
+    anchors.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var id     = link.getAttribute('href').slice(1);
+        var target = id ? document.getElementById(id) : null;
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  }
+
   /* ── Boot ─────────────────────────────────────────── */
   function boot() {
     initReveal();
     initKeyboardNav();
+    initSmoothAnchor();
   }
 
   if (document.readyState === 'loading') {
